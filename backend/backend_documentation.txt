@@ -1,0 +1,76 @@
+Backend Code Documentation (Python):
+Key Functions
+load_models()
+Purpose: Loads pre-trained TF-IDF vectorizer and SVM classifier from .pkl files.
+Returns:
+tfidf: TF-IDF vectorizer for text processing.
+svc_classifier: SVM model for spam classification.
+check_url_virustotal(url, max_wait=30)
+Purpose: Checks a URL against VirusTotal’s API for malicious activity.
+Parameters:
+url: The URL to scan.
+max_wait: Maximum time (seconds) to wait for VirusTotal’s response.
+Returns:
+"SPAM" if malicious/suspicious.
+"SAFE" if clean
+"UNKNOWN" if timeout or error.
+extract_urls(text)
+Purpose: Extracts URLs from a given text using regex.
+Returns: List of URLs found in the text.
+get_sha256(file_path)
+Purpose: Computes SHA-256 hash of an APK file.
+Returns: Hex digest of the file hash.
+scan_with_virustotal(file_hash)
+Purpose: Checks an APK’s hash against VirusTotal.
+Returns: "Malware" or "Benign" based on VirusTotal’s analysis.
+load_cache(), save_cache(), get_cached_result(), store_result_in_cache()
+Purpose: Manages a local JSON cache for APK scan results to avoid repeated API calls.
+
+
+
+
+
+
+API Endpoints
+POST /check_url
+Input: {"url": "https://example.com"}
+Output: {"status": "SPAM" | "SAFE" | "UNKNOWN"}
+Description: Checks a URL using VirusTotal.
+POST /predict_spam
+Input: {"email": "text with possible spam content"}
+Output: {"prediction": "spam" | "ham"}
+Description: Predicts if an email is spam using ML + URL checks.
+POST /login
+Input: {"email": "user@example.com", "password": "password123"}
+Output:
+Success: {"success": True, "id": 1, "username": "test"}
+Failure: {"success": False, "message": "Invalid email or password"}
+POST /register
+Input: {"username": "test", "email": "user@example.com", "password": "password123"}
+Output:
+Success: {"success": True, "message": "User registered successfully"}
+Failure: {"success": False, "message": "Email already registered"}
+POST /store_url_result
+Input: {"userId": 1, "url": "https://example.com", "result": "SPAM"}
+Output:
+Success: {"success": True, "message": "URL result stored"}
+Failure: {"success": False, "message": "Missing required fields"}
+POST /history
+Input: {"userId": 1}
+Output:
+Success: {"success": True, "history": [...]}
+Failure: {"success": False, "message": "User ID required"}
+POST /apk_scan
+Input: apk_file (APK file upload)
+Output:
+json
+{
+  "result": "Malware" | "Benign",
+  "sha256": "file_hash",
+  "ml_result": "Malware" | "Benign" | "Unknown",
+  "vt_result": "Malware" | "Benign",
+  "cached": false
+}
+Description:
+Extracts APK features and runs ML + VirusTotal scans.
+Caches results to avoid redundant scans.
